@@ -33,26 +33,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 /**
  * Allows to work with entity relations and perform specific operations with those relations.
  *
@@ -89,17 +69,17 @@ var RelationRemover = /** @class */ (function () {
                         parameters_1 = {};
                         conditions_1 = [];
                         ofs.forEach(function (of, ofIndex) {
-                            conditions_1.push.apply(conditions_1, __spread(values_1.map(function (value, valueIndex) {
-                                return __spread(relation.inverseRelation.joinColumns.map(function (column, columnIndex) {
+                            conditions_1.push.apply(conditions_1, values_1.map(function (value, valueIndex) {
+                                return relation.inverseRelation.joinColumns.map(function (column, columnIndex) {
                                     var parameterName = "joinColumn_" + ofIndex + "_" + valueIndex + "_" + columnIndex;
                                     parameters_1[parameterName] = of instanceof Object ? column.referencedColumn.getEntityValue(of) : of;
                                     return column.propertyPath + " = :" + parameterName;
-                                }), relation.inverseRelation.entityMetadata.primaryColumns.map(function (column, columnIndex) {
+                                }).concat(relation.inverseRelation.entityMetadata.primaryColumns.map(function (column, columnIndex) {
                                     var parameterName = "primaryColumn_" + valueIndex + "_" + valueIndex + "_" + columnIndex;
                                     parameters_1[parameterName] = value instanceof Object ? column.getEntityValue(value) : value;
                                     return column.propertyPath + " = :" + parameterName;
                                 })).join(" AND ");
-                            })));
+                            }));
                         });
                         condition = conditions_1.map(function (str) { return "(" + str + ")"; }).join(" OR ");
                         if (!condition)
@@ -123,17 +103,17 @@ var RelationRemover = /** @class */ (function () {
                         parameters_2 = {};
                         conditions_2 = [];
                         firstColumnValues.forEach(function (firstColumnVal, firstColumnValIndex) {
-                            conditions_2.push.apply(conditions_2, __spread(secondColumnValues_1.map(function (secondColumnVal, secondColumnValIndex) {
-                                return __spread(junctionMetadata_1.ownerColumns.map(function (column, columnIndex) {
+                            conditions_2.push.apply(conditions_2, secondColumnValues_1.map(function (secondColumnVal, secondColumnValIndex) {
+                                return junctionMetadata_1.ownerColumns.map(function (column, columnIndex) {
                                     var parameterName = "firstValue_" + firstColumnValIndex + "_" + secondColumnValIndex + "_" + columnIndex;
                                     parameters_2[parameterName] = firstColumnVal instanceof Object ? column.referencedColumn.getEntityValue(firstColumnVal) : firstColumnVal;
                                     return column.databaseName + " = :" + parameterName;
-                                }), junctionMetadata_1.inverseColumns.map(function (column, columnIndex) {
+                                }).concat(junctionMetadata_1.inverseColumns.map(function (column, columnIndex) {
                                     var parameterName = "secondValue_" + firstColumnValIndex + "_" + secondColumnValIndex + "_" + columnIndex;
                                     parameters_2[parameterName] = firstColumnVal instanceof Object ? column.referencedColumn.getEntityValue(secondColumnVal) : secondColumnVal;
                                     return column.databaseName + " = :" + parameterName;
                                 })).join(" AND ");
-                            })));
+                            }));
                         });
                         condition = conditions_2.map(function (str) { return "(" + str + ")"; }).join(" OR ");
                         return [4 /*yield*/, this.queryBuilder

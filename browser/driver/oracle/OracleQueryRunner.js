@@ -43,22 +43,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 import { TransactionAlreadyStartedError } from "../../error/TransactionAlreadyStartedError";
 import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
 import { TableColumn } from "../../schema-builder/table/TableColumn";
@@ -140,26 +124,16 @@ var OracleQueryRunner = /** @class */ (function (_super) {
     /**
      * Starts transaction.
      */
-    OracleQueryRunner.prototype.startTransaction = function (isolationLevel) {
-        if (isolationLevel === void 0) { isolationLevel = "READ COMMITTED"; }
+    OracleQueryRunner.prototype.startTransaction = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (this.isReleased)
-                            throw new QueryRunnerAlreadyReleasedError();
-                        if (this.isTransactionActive)
-                            throw new TransactionAlreadyStartedError();
-                        // await this.query("START TRANSACTION");
-                        if (isolationLevel !== "SERIALIZABLE" && isolationLevel !== "READ COMMITTED") {
-                            throw new Error("Oracle only supports SERIALIZABLE and READ COMMITTED isolation");
-                        }
-                        return [4 /*yield*/, this.query("SET TRANSACTION ISOLATION LEVEL " + isolationLevel)];
-                    case 1:
-                        _a.sent();
-                        this.isTransactionActive = true;
-                        return [2 /*return*/];
-                }
+                if (this.isReleased)
+                    throw new QueryRunnerAlreadyReleasedError();
+                if (this.isTransactionActive)
+                    throw new TransactionAlreadyStartedError();
+                // await this.query("START TRANSACTION");
+                this.isTransactionActive = true;
+                return [2 /*return*/];
             });
         });
     };
@@ -1593,7 +1567,7 @@ var OracleQueryRunner = /** @class */ (function (_super) {
                                 this.query(constraintsSql),
                             ])];
                     case 1:
-                        _a = __read.apply(void 0, [_b.sent(), 5]), dbTables = _a[0], dbColumns = _a[1], dbIndices = _a[2], dbForeignKeys = _a[3], dbConstraints = _a[4];
+                        _a = _b.sent(), dbTables = _a[0], dbColumns = _a[1], dbIndices = _a[2], dbForeignKeys = _a[3], dbConstraints = _a[4];
                         // if tables were not found in the db, no need to proceed
                         if (!dbTables.length)
                             return [2 /*return*/, []];

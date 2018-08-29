@@ -7,22 +7,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var Alias_1 = require("./Alias");
 var JoinAttribute_1 = require("./JoinAttribute");
@@ -232,7 +216,7 @@ var QueryExpressionMap = /** @class */ (function () {
         return alias;
     };
     QueryExpressionMap.prototype.findColumnByAliasExpression = function (aliasExpression) {
-        var _a = __read(aliasExpression.split("."), 2), aliasName = _a[0], propertyPath = _a[1];
+        var _a = aliasExpression.split("."), aliasName = _a[0], propertyPath = _a[1];
         var alias = this.findAliasByName(aliasName);
         return alias.metadata.findColumnWithPropertyName(propertyPath);
     };

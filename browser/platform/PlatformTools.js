@@ -12,13 +12,7 @@ var PlatformTools = /** @class */ (function () {
      * Gets global variable where global stuff can be stored.
      */
     PlatformTools.getGlobalVariable = function () {
-        if (typeof window !== "undefined") {
-            return window;
-        }
-        else {
-            // NativeScript uses global, not window
-            return global;
-        }
+        return window;
     };
     /**
      * Loads ("require"-s) given file or package.
@@ -142,12 +136,6 @@ var Writable = /** @class */ (function () {
     return Writable;
 }());
 export { Writable };
-if (typeof window !== "undefined") {
-    window.Buffer = require("buffer/").Buffer;
-}
-// NativeScript uses global, not window
-if (typeof global !== "undefined") {
-    global.Buffer = require("buffer/").Buffer;
-}
+window.Buffer = require("buffer/").Buffer;
 
 //# sourceMappingURL=PlatformTools.js.map

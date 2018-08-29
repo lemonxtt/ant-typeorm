@@ -7,11 +7,9 @@ var OracleDriver_1 = require("./oracle/OracleDriver");
 var SqliteDriver_1 = require("./sqlite/SqliteDriver");
 var CordovaDriver_1 = require("./cordova/CordovaDriver");
 var ReactNativeDriver_1 = require("./react-native/ReactNativeDriver");
-var NativescriptDriver_1 = require("./nativescript/NativescriptDriver");
 var SqljsDriver_1 = require("./sqljs/SqljsDriver");
 var MysqlDriver_1 = require("./mysql/MysqlDriver");
 var PostgresDriver_1 = require("./postgres/PostgresDriver");
-var ExpoDriver_1 = require("./expo/ExpoDriver");
 /**
  * Helps to create drivers.
  */
@@ -34,8 +32,6 @@ var DriverFactory = /** @class */ (function () {
                 return new SqliteDriver_1.SqliteDriver(connection);
             case "cordova":
                 return new CordovaDriver_1.CordovaDriver(connection);
-            case "nativescript":
-                return new NativescriptDriver_1.NativescriptDriver(connection);
             case "react-native":
                 return new ReactNativeDriver_1.ReactNativeDriver(connection);
             case "sqljs":
@@ -46,8 +42,6 @@ var DriverFactory = /** @class */ (function () {
                 return new SqlServerDriver_1.SqlServerDriver(connection);
             case "mongodb":
                 return new MongoDriver_1.MongoDriver(connection);
-            case "expo":
-                return new ExpoDriver_1.ExpoDriver(connection);
             default:
                 throw new MissingDriverError_1.MissingDriverError(type);
         }

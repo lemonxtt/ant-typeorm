@@ -94,6 +94,7 @@ var MysqlDriver = /** @class */ (function () {
             "longtext",
             "enum",
             "json",
+            "rowversion",
             "binary",
             "varbinary",
             "geometry",

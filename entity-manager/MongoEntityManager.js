@@ -44,22 +44,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var EntityManager_1 = require("./EntityManager");
 var DocumentToEntityTransformer_1 = require("../query-builder/transformer/DocumentToEntityTransformer");
@@ -152,7 +136,7 @@ var MongoEntityManager = /** @class */ (function (_super) {
                                 this.count(entityClassOrName, query),
                             ])];
                     case 2:
-                        _a = __read.apply(void 0, [_b.sent(), 2]), results = _a[0], count = _a[1];
+                        _a = _b.sent(), results = _a[0], count = _a[1];
                         return [2 /*return*/, [results, parseInt(count)]];
                 }
             });

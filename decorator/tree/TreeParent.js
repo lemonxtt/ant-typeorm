@@ -7,6 +7,7 @@ var _1 = require("../../");
  */
 function TreeParent(options) {
     if (options === void 0) { options = {}; }
+
     return function (object, propertyName) {
         // now try to determine it its lazy relation
         var reflectedType = Reflect && Reflect.getMetadata ? Reflect.getMetadata("design:type", object, propertyName) : undefined;

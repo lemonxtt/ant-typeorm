@@ -106,11 +106,6 @@ var PlatformTools = /** @class */ (function () {
                 case "sqlite3":
                     return require("sqlite3");
                 /**
-                * sql.js
-                */
-                case "sql.js":
-                    return require("sql.js");
-                /**
                 * sqlserver
                 */
                 case "mssql":

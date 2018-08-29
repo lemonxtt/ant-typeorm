@@ -44,22 +44,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransactionAlreadyStartedError_1 = require("../../error/TransactionAlreadyStartedError");
 var TransactionNotStartedError_1 = require("../../error/TransactionNotStartedError");
@@ -107,7 +91,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
             return this.databaseConnectionPromise;
         if (this.mode === "slave" && this.driver.isReplicated) {
             this.databaseConnectionPromise = this.driver.obtainSlaveConnection().then(function (_a) {
-                var _b = __read(_a, 2), connection = _b[0], release = _b[1];
+                var connection = _a[0], release = _a[1];
                 _this.driver.connectedQueryRunners.push(_this);
                 _this.databaseConnection = connection;
                 _this.releaseCallback = release;
@@ -116,7 +100,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
         }
         else { // master
             this.databaseConnectionPromise = this.driver.obtainMasterConnection().then(function (_a) {
-                var _b = __read(_a, 2), connection = _b[0], release = _b[1];
+                var connection = _a[0], release = _a[1];
                 _this.driver.connectedQueryRunners.push(_this);
                 _this.databaseConnection = connection;
                 _this.releaseCallback = release;
@@ -141,7 +125,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
     /**
      * Starts transaction.
      */
-    PostgresQueryRunner.prototype.startTransaction = function (isolationLevel) {
+    PostgresQueryRunner.prototype.startTransaction = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -152,12 +136,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.query("START TRANSACTION")];
                     case 1:
                         _a.sent();
-                        if (!isolationLevel) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.query("SET TRANSACTION ISOLATION LEVEL " + isolationLevel)];
-                    case 2:
-                        _a.sent();
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -991,10 +970,6 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                 downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" SET DEFAULT " + oldColumn.default);
                             }
                         }
-                        if ((newColumn.spatialFeatureType || "").toLowerCase() !== (oldColumn.spatialFeatureType || "").toLowerCase() || newColumn.srid !== oldColumn.srid) {
-                            upQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" TYPE " + this.driver.createFullType(newColumn));
-                            downQueries.push("ALTER TABLE " + this.escapeTableName(table) + " ALTER COLUMN \"" + newColumn.name + "\" TYPE " + this.driver.createFullType(oldColumn));
-                        }
                         _b.label = 7;
                     case 7: return [4 /*yield*/, this.executeQueries(upQueries, downQueries)];
                     case 8:
@@ -1662,7 +1637,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         _a.label = 2;
                     case 2:
                         _a.trys.push([2, 7, , 12]);
-                        selectDropsQuery = "SELECT 'DROP TABLE IF EXISTS \"' || schemaname || '\".\"' || tablename || '\" CASCADE;' as \"query\" FROM \"pg_tables\" WHERE \"schemaname\" IN (" + schemaNamesString + ") AND tablename NOT IN ('spatial_ref_sys')";
+                        selectDropsQuery = "SELECT 'DROP TABLE IF EXISTS \"' || schemaname || '\".\"' || tablename || '\" CASCADE;' as \"query\" FROM \"pg_tables\" WHERE \"schemaname\" IN (" + schemaNamesString + ")";
                         return [4 /*yield*/, this.query(selectDropsQuery)];
                     case 3:
                         dropQueries = _a.sent();
@@ -1715,7 +1690,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         currentSchemaQuery = _b.sent();
                         currentSchema = currentSchemaQuery[0]["current_schema"];
                         tablesCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), schema = _a[0], name = _a[1];
+                            var _a = tableName.split("."), schema = _a[0], name = _a[1];
                             if (!name) {
                                 name = schema;
                                 schema = _this.driver.options.schema || currentSchema;
@@ -1725,7 +1700,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                         tablesSql = "SELECT * FROM \"information_schema\".\"tables\" WHERE " + tablesCondition;
                         columnsSql = "SELECT *, \"udt_name\"::\"regtype\" AS \"regtype\" FROM \"information_schema\".\"columns\" WHERE " + tablesCondition;
                         constraintsCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), schema = _a[0], name = _a[1];
+                            var _a = tableName.split("."), schema = _a[0], name = _a[1];
                             if (!name) {
                                 name = schema;
                                 schema = _this.driver.options.schema || currentSchema;
@@ -1740,18 +1715,16 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                             "INNER JOIN \"pg_attribute\" \"a\" ON \"a\".\"attrelid\" = \"cnst\".\"conrelid\" AND \"a\".\"attnum\" = ANY (\"cnst\".\"conkey\") " +
                             ("WHERE \"t\".\"relkind\" = 'r' AND (" + constraintsCondition + ")");
                         indicesSql = "SELECT \"ns\".\"nspname\" AS \"table_schema\", \"t\".\"relname\" AS \"table_name\", \"i\".\"relname\" AS \"constraint_name\", \"a\".\"attname\" AS \"column_name\", " +
-                            "CASE \"ix\".\"indisunique\" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS \"is_unique\", pg_get_expr(\"ix\".\"indpred\", \"ix\".\"indrelid\") AS \"condition\", " +
-                            "\"types\".\"typname\" AS \"type_name\" " +
+                            "CASE \"ix\".\"indisunique\" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS \"is_unique\", pg_get_expr(\"ix\".\"indpred\", \"ix\".\"indrelid\") AS \"condition\" " +
                             "FROM \"pg_class\" \"t\" " +
                             "INNER JOIN \"pg_index\" \"ix\" ON \"ix\".\"indrelid\" = \"t\".\"oid\" " +
                             "INNER JOIN \"pg_attribute\" \"a\" ON \"a\".\"attrelid\" = \"t\".\"oid\"  AND \"a\".\"attnum\" = ANY (\"ix\".\"indkey\") " +
                             "INNER JOIN \"pg_namespace\" \"ns\" ON \"ns\".\"oid\" = \"t\".\"relnamespace\" " +
                             "INNER JOIN \"pg_class\" \"i\" ON \"i\".\"oid\" = \"ix\".\"indexrelid\" " +
-                            "INNER JOIN \"pg_type\" \"types\" ON \"types\".\"oid\" = \"a\".\"atttypid\" " +
                             "LEFT JOIN \"pg_constraint\" \"cnst\" ON \"cnst\".\"conname\" = \"i\".\"relname\" " +
                             ("WHERE \"t\".\"relkind\" = 'r' AND \"cnst\".\"contype\" IS NULL AND (" + constraintsCondition + ")");
                         foreignKeysCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), schema = _a[0], name = _a[1];
+                            var _a = tableName.split("."), schema = _a[0], name = _a[1];
                             if (!name) {
                                 name = schema;
                                 schema = _this.driver.options.schema || currentSchema;
@@ -1781,7 +1754,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                 this.query(foreignKeysSql),
                             ])];
                     case 2:
-                        _a = __read.apply(void 0, [_b.sent(), 5]), dbTables = _a[0], dbColumns = _a[1], dbConstraints = _a[2], dbIndices = _a[3], dbForeignKeys = _a[4];
+                        _a = _b.sent(), dbTables = _a[0], dbColumns = _a[1], dbConstraints = _a[2], dbIndices = _a[3], dbForeignKeys = _a[4];
                         // if tables were not found in the db, no need to proceed
                         if (!dbTables.length)
                             return [2 /*return*/, []];
@@ -1802,7 +1775,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                                     .filter(function (dbColumn) { return _this.driver.buildTableName(dbColumn["table_name"], dbColumn["table_schema"]) === tableFullName; })
                                                     .map(function (dbColumn) { return __awaiter(_this, void 0, void 0, function () {
                                                     var _this = this;
-                                                    var columnConstraints, tableColumn, type, sql, results, geometryColumnSql, results, geographyColumnSql, results, length, uniqueConstraint, isConstraintComposite;
+                                                    var columnConstraints, tableColumn, type, sql, results, length, uniqueConstraint, isConstraintComposite;
                                                     return __generator(this, function (_a) {
                                                         switch (_a.label) {
                                                             case 0:
@@ -1852,24 +1825,6 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                                                 tableColumn.enum = results.map(function (result) { return result["value"]; });
                                                                 _a.label = 2;
                                                             case 2:
-                                                                if (!(tableColumn.type === "geometry")) return [3 /*break*/, 4];
-                                                                geometryColumnSql = "SELECT * FROM (\n                        SELECT\n                          f_table_schema table_schema,\n                          f_table_name table_name,\n                          f_geometry_column column_name,\n                          srid,\n                          type\n                        FROM geometry_columns\n                      ) AS _\n                      WHERE " + tablesCondition + " AND column_name = '" + tableColumn.name + "'";
-                                                                return [4 /*yield*/, this.query(geometryColumnSql)];
-                                                            case 3:
-                                                                results = _a.sent();
-                                                                tableColumn.spatialFeatureType = results[0].type;
-                                                                tableColumn.srid = results[0].srid;
-                                                                _a.label = 4;
-                                                            case 4:
-                                                                if (!(tableColumn.type === "geography")) return [3 /*break*/, 6];
-                                                                geographyColumnSql = "SELECT * FROM (\n                        SELECT\n                          f_table_schema table_schema,\n                          f_table_name table_name,\n                          f_geography_column column_name,\n                          srid,\n                          type\n                        FROM geography_columns\n                      ) AS _\n                      WHERE " + tablesCondition + " AND column_name = '" + tableColumn.name + "'";
-                                                                return [4 /*yield*/, this.query(geographyColumnSql)];
-                                                            case 5:
-                                                                results = _a.sent();
-                                                                tableColumn.spatialFeatureType = results[0].type;
-                                                                tableColumn.srid = results[0].srid;
-                                                                _a.label = 6;
-                                                            case 6:
                                                                 // check only columns that have length property
                                                                 if (this.driver.withLengthColumnTypes.indexOf(tableColumn.type) !== -1 && dbColumn["character_maximum_length"]) {
                                                                     length = dbColumn["character_maximum_length"].toString();
@@ -1960,7 +1915,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
                                                     columnNames: indices.map(function (i) { return i["column_name"]; }),
                                                     isUnique: constraint["is_unique"] === "TRUE",
                                                     where: constraint["condition"],
-                                                    isSpatial: indices.every(function (i) { return _this.driver.spatialTypes.indexOf(i["type_name"]) >= 0; }),
+                                                    isSpatial: false,
                                                     isFulltext: false
                                                 });
                                             });
@@ -2110,7 +2065,7 @@ var PostgresQueryRunner = /** @class */ (function (_super) {
      */
     PostgresQueryRunner.prototype.createIndexSql = function (table, index) {
         var columns = index.columnNames.map(function (columnName) { return "\"" + columnName + "\""; }).join(", ");
-        return "CREATE " + (index.isUnique ? "UNIQUE " : "") + "INDEX \"" + index.name + "\" ON " + this.escapeTableName(table) + " " + (index.isSpatial ? "USING GiST " : "") + " (" + columns + ") " + (index.where ? "WHERE " + index.where : "");
+        return "CREATE " + (index.isUnique ? "UNIQUE " : "") + "INDEX \"" + index.name + "\" ON " + this.escapeTableName(table) + "(" + columns + ") " + (index.where ? "WHERE " + index.where : "");
     };
     /**
      * Builds drop index sql.

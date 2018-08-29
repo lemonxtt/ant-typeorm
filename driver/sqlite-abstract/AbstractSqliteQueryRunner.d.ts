@@ -9,7 +9,6 @@ import { ReadStream } from "../../platform/PlatformTools";
 import { TableUnique } from "../../schema-builder/table/TableUnique";
 import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner";
 import { TableCheck } from "../../schema-builder/table/TableCheck";
-import { IsolationLevel } from "../types/IsolationLevel";
 /**
  * Runs queries on a single sqlite database connection.
  */
@@ -32,7 +31,7 @@ export declare abstract class AbstractSqliteQueryRunner extends BaseQueryRunner 
     /**
      * Starts transaction.
      */
-    startTransaction(isolationLevel?: IsolationLevel): Promise<void>;
+    startTransaction(): Promise<void>;
     /**
      * Commits transaction.
      * Error will be thrown if transaction was not started.

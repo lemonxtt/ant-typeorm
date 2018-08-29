@@ -113,9 +113,6 @@ var SqljsQueryRunner = /** @class */ (function (_super) {
                     ok(result);
                 }
                 catch (e) {
-                    if (statement) {
-                        statement.free();
-                    }
                     this.driver.connection.logger.logQueryError(e, query, parameters, this);
                     fail(new QueryFailedError(query, parameters, e));
                 }

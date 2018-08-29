@@ -33,26 +33,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 import { SqlInMemory } from "../driver/SqlInMemory";
 import { PromiseUtils } from "../util/PromiseUtils";
 var BaseQueryRunner = /** @class */ (function () {
@@ -365,8 +345,8 @@ var BaseQueryRunner = /** @class */ (function () {
                             upQueries = [upQueries];
                         if (typeof downQueries === "string")
                             downQueries = [downQueries];
-                        (_a = this.sqlInMemory.upQueries).push.apply(_a, __spread(upQueries));
-                        (_b = this.sqlInMemory.downQueries).push.apply(_b, __spread(downQueries));
+                        (_a = this.sqlInMemory.upQueries).push.apply(_a, upQueries);
+                        (_b = this.sqlInMemory.downQueries).push.apply(_b, downQueries);
                         // if sql-in-memory mode is enabled then simply store sql in memory and return
                         if (this.sqlMemoryMode === true)
                             return [2 /*return*/, Promise.resolve()];

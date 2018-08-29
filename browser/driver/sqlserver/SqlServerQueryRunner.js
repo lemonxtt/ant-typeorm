@@ -43,26 +43,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 import { TransactionAlreadyStartedError } from "../../error/TransactionAlreadyStartedError";
 import { TransactionNotStartedError } from "../../error/TransactionNotStartedError";
 import { TableColumn } from "../../schema-builder/table/TableColumn";
@@ -127,7 +107,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
     /**
      * Starts transaction.
      */
-    SqlServerQueryRunner.prototype.startTransaction = function (isolationLevel) {
+    SqlServerQueryRunner.prototype.startTransaction = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
@@ -137,7 +117,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                     throw new TransactionAlreadyStartedError();
                 return [2 /*return*/, new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
                         var _this = this;
-                        var pool, transactionCallback;
+                        var pool;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
                                 case 0:
@@ -146,23 +126,14 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                                 case 1:
                                     pool = _a.sent();
                                     this.databaseConnection = pool.transaction();
-                                    transactionCallback = function (err) {
+                                    this.databaseConnection.begin(function (err) {
                                         if (err) {
                                             _this.isTransactionActive = false;
                                             return fail(err);
                                         }
                                         ok();
                                         _this.connection.logger.logQuery("BEGIN TRANSACTION");
-                                        if (isolationLevel) {
-                                            _this.connection.logger.logQuery("SET TRANSACTION ISOLATION LEVEL " + isolationLevel);
-                                        }
-                                    };
-                                    if (isolationLevel) {
-                                        this.databaseConnection.begin(this.convertIsolationLevel(isolationLevel), transactionCallback);
-                                    }
-                                    else {
-                                        this.databaseConnection.begin(transactionCallback);
-                                    }
+                                    });
                                     return [2 /*return*/];
                             }
                         });
@@ -234,7 +205,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                             throw new QueryRunnerAlreadyReleasedError();
                         waitingPromise = new Promise(function (ok) { return waitingOkay = ok; });
                         if (!this.queryResponsibilityChain.length) return [3 /*break*/, 2];
-                        otherWaitingPromises = __spread(this.queryResponsibilityChain);
+                        otherWaitingPromises = this.queryResponsibilityChain.slice();
                         this.queryResponsibilityChain.push(waitingPromise);
                         return [4 /*yield*/, Promise.all(otherWaitingPromises)];
                     case 1:
@@ -325,7 +296,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                             throw new QueryRunnerAlreadyReleasedError();
                         waitingPromise = new Promise(function (ok) { return waitingOkay = ok; });
                         if (!this.queryResponsibilityChain.length) return [3 /*break*/, 2];
-                        otherWaitingPromises = __spread(this.queryResponsibilityChain);
+                        otherWaitingPromises = this.queryResponsibilityChain.slice();
                         this.queryResponsibilityChain.push(waitingPromise);
                         return [4 /*yield*/, Promise.all(otherWaitingPromises)];
                     case 1:
@@ -1924,7 +1895,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                     case 2:
                         currentDatabase = _b.sent();
                         extractTableSchemaAndName = function (tableName) {
-                            var _a = __read(tableName.split("."), 3), database = _a[0], schema = _a[1], name = _a[2];
+                            var _a = tableName.split("."), database = _a[0], schema = _a[1], name = _a[2];
                             // if name is empty, it means that tableName have only schema name and table name or only table name
                             if (!name) {
                                 // if schema is empty, it means tableName have only name of a table. Otherwise it means that we have "schemaName"."tableName" string.
@@ -1960,7 +1931,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                             dbNames.push(this.driver.database);
                         schemaNamesString = schemaNames.map(function (name) { return "'" + name + "'"; }).join(", ");
                         tablesCondition = tableNames.map(function (tableName) {
-                            var _a = __read(extractTableSchemaAndName(tableName), 2), schema = _a[0], name = _a[1];
+                            var _a = extractTableSchemaAndName(tableName), schema = _a[0], name = _a[1];
                             return "(\"TABLE_SCHEMA\" = '" + schema + "' AND \"TABLE_NAME\" = '" + name + "')";
                         }).join(" OR ");
                         tablesSql = dbNames.map(function (dbName) {
@@ -1970,7 +1941,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                             return "SELECT * FROM \"" + dbName + "\".\"INFORMATION_SCHEMA\".\"COLUMNS\" WHERE " + tablesCondition;
                         }).join(" UNION ALL ");
                         constraintsCondition = tableNames.map(function (tableName) {
-                            var _a = __read(extractTableSchemaAndName(tableName), 2), schema = _a[0], name = _a[1];
+                            var _a = extractTableSchemaAndName(tableName), schema = _a[0], name = _a[1];
                             return "(\"columnUsages\".\"TABLE_SCHEMA\" = '" + schema + "' AND \"columnUsages\".\"TABLE_NAME\" = '" + name + "' " +
                                 ("AND \"tableConstraints\".\"TABLE_SCHEMA\" = '" + schema + "' AND \"tableConstraints\".\"TABLE_NAME\" = '" + name + "')");
                         }).join(" OR ");
@@ -2020,7 +1991,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                                 this.query(indicesSql),
                             ])];
                     case 3:
-                        _a = __read.apply(void 0, [_b.sent(), 7]), dbTables = _a[0], dbColumns = _a[1], dbConstraints = _a[2], dbForeignKeys = _a[3], dbIdentityColumns = _a[4], dbCollations = _a[5], dbIndices = _a[6];
+                        _a = _b.sent(), dbTables = _a[0], dbColumns = _a[1], dbConstraints = _a[2], dbForeignKeys = _a[3], dbIdentityColumns = _a[4], dbCollations = _a[5], dbIndices = _a[6];
                         // if tables were not found in the db, no need to proceed
                         if (!dbTables.length)
                             return [2 /*return*/, []];
@@ -2403,7 +2374,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
             case "bigint":
                 return this.driver.mssql.BigInt;
             case "decimal":
-                return (_a = this.driver.mssql).Decimal.apply(_a, __spread(parameter.params));
+                return (_a = this.driver.mssql).Decimal.apply(_a, parameter.params);
             case "float":
                 return this.driver.mssql.Float;
             case "int":
@@ -2411,7 +2382,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
             case "money":
                 return this.driver.mssql.Money;
             case "numeric":
-                return (_b = this.driver.mssql).Numeric.apply(_b, __spread(parameter.params));
+                return (_b = this.driver.mssql).Numeric.apply(_b, parameter.params);
             case "smallint":
                 return this.driver.mssql.SmallInt;
             case "smallmoney":
@@ -2421,29 +2392,29 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
             case "tinyint":
                 return this.driver.mssql.TinyInt;
             case "char":
-                return (_c = this.driver.mssql).Char.apply(_c, __spread(parameter.params));
+                return (_c = this.driver.mssql).Char.apply(_c, parameter.params);
             case "nchar":
-                return (_d = this.driver.mssql).NChar.apply(_d, __spread(parameter.params));
+                return (_d = this.driver.mssql).NChar.apply(_d, parameter.params);
             case "text":
                 return this.driver.mssql.Text;
             case "ntext":
                 return this.driver.mssql.Ntext;
             case "varchar":
-                return (_e = this.driver.mssql).VarChar.apply(_e, __spread(parameter.params));
+                return (_e = this.driver.mssql).VarChar.apply(_e, parameter.params);
             case "nvarchar":
-                return (_f = this.driver.mssql).NVarChar.apply(_f, __spread(parameter.params));
+                return (_f = this.driver.mssql).NVarChar.apply(_f, parameter.params);
             case "xml":
                 return this.driver.mssql.Xml;
             case "time":
-                return (_g = this.driver.mssql).Time.apply(_g, __spread(parameter.params));
+                return (_g = this.driver.mssql).Time.apply(_g, parameter.params);
             case "date":
                 return this.driver.mssql.Date;
             case "datetime":
                 return this.driver.mssql.DateTime;
             case "datetime2":
-                return (_h = this.driver.mssql).DateTime2.apply(_h, __spread(parameter.params));
+                return (_h = this.driver.mssql).DateTime2.apply(_h, parameter.params);
             case "datetimeoffset":
-                return (_j = this.driver.mssql).DateTimeOffset.apply(_j, __spread(parameter.params));
+                return (_j = this.driver.mssql).DateTimeOffset.apply(_j, parameter.params);
             case "smalldatetime":
                 return this.driver.mssql.SmallDateTime;
             case "uniqueidentifier":
@@ -2453,7 +2424,7 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
             case "binary":
                 return this.driver.mssql.Binary;
             case "varbinary":
-                return (_k = this.driver.mssql).VarBinary.apply(_k, __spread(parameter.params));
+                return (_k = this.driver.mssql).VarBinary.apply(_k, parameter.params);
             case "image":
                 return this.driver.mssql.Image;
             case "udt":
@@ -2462,24 +2433,6 @@ var SqlServerQueryRunner = /** @class */ (function (_super) {
                 return this.driver.mssql.RowVersion;
         }
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-    };
-    /**
-     * Converts string literal of isolation level to enum.
-     * The underlying mssql driver requires an enum for the isolation level.
-     */
-    SqlServerQueryRunner.prototype.convertIsolationLevel = function (isolation) {
-        var ISOLATION_LEVEL = this.driver.mssql.ISOLATION_LEVEL;
-        switch (isolation) {
-            case "READ UNCOMMITTED":
-                return ISOLATION_LEVEL.READ_UNCOMMITTED;
-            case "REPEATABLE READ":
-                return ISOLATION_LEVEL.REPEATABLE_READ;
-            case "SERIALIZABLE":
-                return ISOLATION_LEVEL.SERIALIZABLE;
-            case "READ COMMITTED":
-            default:
-                return ISOLATION_LEVEL.READ_COMMITTED;
-        }
     };
     return SqlServerQueryRunner;
 }(BaseQueryRunner));

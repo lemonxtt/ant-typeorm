@@ -633,7 +633,7 @@ var OracleDriver = /** @class */ (function () {
                 connectionOptions = Object.assign({}, {
                     user: credentials.username,
                     password: credentials.password,
-                    connectString: credentials.connectString ? credentials.connectString : credentials.host + ":" + credentials.port + "/" + credentials.sid,
+                    connectString: credentials.host + ":" + credentials.port + "/" + credentials.sid,
                 }, options.extra || {});
                 // pooling is enabled either when its set explicitly to true,
                 // either when its not defined at all (e.g. enabled by default)

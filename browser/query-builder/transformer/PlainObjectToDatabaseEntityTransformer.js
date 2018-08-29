@@ -33,22 +33,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 /**
  */
 var LoadMapItem = /** @class */ (function () {
@@ -143,7 +127,7 @@ var PlainObjectToDatabaseEntityTransformer = /** @class */ (function () {
                                 .extractRelationValuesFromEntity(entity, metadata.relations)
                                 .filter(function (value) { return value !== null && value !== undefined; })
                                 .forEach(function (_a) {
-                                var _b = __read(_a, 3), relation = _b[0], value = _b[1], inverseEntityMetadata = _b[2];
+                                var relation = _a[0], value = _a[1], inverseEntityMetadata = _a[2];
                                 return fillLoadMap(value, inverseEntityMetadata, item, relation);
                             });
                         };

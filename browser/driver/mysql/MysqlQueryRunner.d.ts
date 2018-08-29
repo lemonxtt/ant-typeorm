@@ -8,7 +8,6 @@ import { ReadStream } from "../../platform/PlatformTools";
 import { TableUnique } from "../../schema-builder/table/TableUnique";
 import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner";
 import { TableCheck } from "../../schema-builder/table/TableCheck";
-import { IsolationLevel } from "../types/IsolationLevel";
 /**
  * Runs queries on a single mysql database connection.
  */
@@ -35,7 +34,7 @@ export declare class MysqlQueryRunner extends BaseQueryRunner implements QueryRu
     /**
      * Starts transaction on the current connection.
      */
-    startTransaction(isolationLevel?: IsolationLevel): Promise<void>;
+    startTransaction(): Promise<void>;
     /**
      * Commits transaction.
      * Error will be thrown if transaction was not started.

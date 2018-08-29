@@ -1,4 +1,3 @@
-import { TransactionOptions } from "../options/TransactionOptions";
 /**
  * Wraps some method into the transaction.
  *
@@ -13,4 +12,3 @@ import { TransactionOptions } from "../options/TransactionOptions";
  * then use @TransactionRepository() decorator.
  */
 export declare function Transaction(connectionName?: string): MethodDecorator;
-export declare function Transaction(options?: TransactionOptions): MethodDecorator;

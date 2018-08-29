@@ -1,14 +1,4 @@
 "use strict";
-var __values = (this && this.__values) || function (o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
-    if (m) return m.call(o);
-    return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var QueryBuilderUtils_1 = require("./QueryBuilderUtils");
 /**
@@ -50,23 +40,13 @@ var JoinAttribute = /** @class */ (function () {
                     return { value: true };
             };
             var this_1 = this;
-            try {
-                for (var _a = __values(this.queryExpressionMap.selects), _b = _a.next(); !_b.done; _b = _a.next()) {
-                    var select = _b.value;
-                    var state_1 = _loop_1(select);
-                    if (typeof state_1 === "object")
-                        return state_1.value;
-                }
-            }
-            catch (e_1_1) { e_1 = { error: e_1_1 }; }
-            finally {
-                try {
-                    if (_b && !_b.done && (_c = _a.return)) _c.call(_a);
-                }
-                finally { if (e_1) throw e_1.error; }
+            for (var _i = 0, _a = this.queryExpressionMap.selects; _i < _a.length; _i++) {
+                var select = _a[_i];
+                var state_1 = _loop_1(select);
+                if (typeof state_1 === "object")
+                    return state_1.value;
             }
             return false;
-            var e_1, _c;
         },
         enumerable: true,
         configurable: true

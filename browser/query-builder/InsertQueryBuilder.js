@@ -43,22 +43,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 import { QueryBuilder } from "./QueryBuilder";
 import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver";
 import { PostgresDriver } from "../driver/postgres/PostgresDriver";
@@ -129,7 +113,7 @@ var InsertQueryBuilder = /** @class */ (function (_super) {
                         if (this.expressionMap.updateEntity === true && this.expressionMap.mainAlias.hasMetadata) {
                             this.expressionMap.extraReturningColumns = returningResultsEntityUpdator.getInsertionReturningColumns();
                         }
-                        _a = __read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
+                        _a = this.getQueryAndParameters(), sql = _a[0], parameters = _a[1];
                         insertResult = new InsertResult();
                         // console.time(".query execution by database");
                         _b = insertResult;
@@ -419,14 +403,6 @@ var InsertQueryBuilder = /** @class */ (function (_super) {
                         _this.expressionMap.nativeParameters[paramName] = value;
                         if (_this.connection.driver instanceof MysqlDriver && _this.connection.driver.spatialTypes.indexOf(column.type) !== -1) {
                             expression_1 += "GeomFromText(" + _this.connection.driver.createParameter(paramName, parametersCount_1) + ")";
-                        }
-                        else if (_this.connection.driver instanceof PostgresDriver && _this.connection.driver.spatialTypes.indexOf(column.type) !== -1) {
-                            if (column.srid != null) {
-                                expression_1 += "ST_SetSRID(ST_GeomFromGeoJSON(" + _this.connection.driver.createParameter(paramName, parametersCount_1) + "), " + column.srid + ")::" + column.type;
-                            }
-                            else {
-                                expression_1 += "ST_GeomFromGeoJSON(" + _this.connection.driver.createParameter(paramName, parametersCount_1) + ")::" + column.type;
-                            }
                         }
                         else {
                             expression_1 += _this.connection.driver.createParameter(paramName, parametersCount_1);

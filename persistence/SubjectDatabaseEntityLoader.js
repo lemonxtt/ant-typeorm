@@ -34,26 +34,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Loads database entities for all operate subjects which do not have database entity set.
@@ -123,7 +103,7 @@ var SubjectDatabaseEntityLoader = /** @class */ (function () {
                                             // for remove operation
                                             // we only need to load junction relation ids since only they are removed by cascades
                                             loadRelationPropertyPaths.push.apply(// remove
-                                            loadRelationPropertyPaths, __spread(subjectGroup.subjects[0].metadata.manyToManyRelations.map(function (relation) { return relation.propertyPath; })));
+                                            loadRelationPropertyPaths, subjectGroup.subjects[0].metadata.manyToManyRelations.map(function (relation) { return relation.propertyPath; }));
                                         }
                                         findOptions = {
                                             loadEagerRelations: false,
@@ -138,14 +118,14 @@ var SubjectDatabaseEntityLoader = /** @class */ (function () {
                                     case 1:
                                         entities = _a.sent();
                                         // now when we have entities we need to find subject of each entity
-                                        // and insert that entity into database entity of the found subjects
+                                        // and insert that entity into database entity of the found subject
                                         entities.forEach(function (entity) {
-                                            var subjects = _this.findByPersistEntityLike(subjectGroup.target, entity);
-                                            subjects.forEach(function (subject) {
+                                            var subject = _this.findByPersistEntityLike(subjectGroup.target, entity);
+                                            if (subject) {
                                                 subject.databaseEntity = entity;
                                                 if (!subject.identifier)
                                                     subject.identifier = subject.metadata.hasAllPrimaryKeys(entity) ? subject.metadata.getEntityIdMap(entity) : undefined;
-                                            });
+                                            }
                                         });
                                         return [2 /*return*/];
                                 }
@@ -163,13 +143,11 @@ var SubjectDatabaseEntityLoader = /** @class */ (function () {
     // Protected Methods
     // ---------------------------------------------------------------------
     /**
-     * Finds subjects where entity like given subject's entity.
+     * Finds subject where entity like given subject's entity.
      * Comparision made by entity id.
-     * Multiple subjects may be returned if duplicates are present in the subject array.
-     * This will likely result in the same row being updated multiple times during a transaction.
      */
     SubjectDatabaseEntityLoader.prototype.findByPersistEntityLike = function (entityTarget, entity) {
-        return this.subjects.filter(function (subject) {
+        return this.subjects.find(function (subject) {
             if (!subject.entity)
                 return false;
             if (subject.entity === entity)

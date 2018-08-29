@@ -34,26 +34,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var QueryExpressionMap_1 = require("./QueryExpressionMap");
 var Brackets_1 = require("./Brackets");
@@ -214,7 +194,9 @@ var QueryBuilder = /** @class */ (function () {
         // set parent query builder parameters as well in sub-query mode
         if (this.expressionMap.parentQueryBuilder)
             this.expressionMap.parentQueryBuilder.setParameters(parameters);
-        Object.keys(parameters).forEach(function (key) { return _this.setParameter(key, parameters[key]); });
+        Object.keys(parameters).forEach(function (key) {
+            _this.expressionMap.parameters[key] = parameters[key];
+        });
         return this;
     };
     /**
@@ -252,7 +234,7 @@ var QueryBuilder = /** @class */ (function () {
      * Prints sql to stdout using console.log.
      */
     QueryBuilder.prototype.printSql = function () {
-        var _a = __read(this.getQueryAndParameters(), 2), query = _a[0], parameters = _a[1];
+        var _a = this.getQueryAndParameters(), query = _a[0], parameters = _a[1];
         this.connection.logger.logQuery(query, parameters);
         return this;
     };
@@ -281,7 +263,7 @@ var QueryBuilder = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = __read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
+                        _a = this.getQueryAndParameters(), sql = _a[0], parameters = _a[1];
                         queryRunner = this.obtainQueryRunner();
                         _b.label = 1;
                     case 1:
@@ -462,7 +444,7 @@ var QueryBuilder = /** @class */ (function () {
                 statement = statement.replace(new RegExp(expression2, "gm"), "$1" + replacementAliasNamePrefix + _this.escape(column.databaseName) + "$2");
             });
             alias.metadata.relations.forEach(function (relation) {
-                __spread(relation.joinColumns, relation.inverseJoinColumns).forEach(function (joinColumn) {
+                relation.joinColumns.concat(relation.inverseJoinColumns).forEach(function (joinColumn) {
                     var expression = "([ =\(]|^.{0})" + replaceAliasNamePrefix + relation.propertyPath + "\\." + joinColumn.referencedColumn.propertyPath + "([ =\)\,]|.{0}$)";
                     statement = statement.replace(new RegExp(expression, "gm"), "$1" + replacementAliasNamePrefix + _this.escape(joinColumn.databaseName) + "$2"); // todo: fix relation.joinColumns[0], what if multiple columns
                 });
@@ -507,9 +489,9 @@ var QueryBuilder = /** @class */ (function () {
         if (typeof this.expressionMap.returning !== "string" &&
             this.expressionMap.extraReturningColumns.length > 0 &&
             driver.isReturningSqlSupported()) {
-            columns.push.apply(columns, __spread(this.expressionMap.extraReturningColumns.filter(function (column) {
+            columns.push.apply(columns, this.expressionMap.extraReturningColumns.filter(function (column) {
                 return columns.indexOf(column) === -1;
-            })));
+            }));
         }
         if (columns.length) {
             var columnsExpression = columns.map(function (column) {
@@ -550,7 +532,7 @@ var QueryBuilder = /** @class */ (function () {
         if (this.expressionMap.returning instanceof Array) {
             this.expressionMap.returning.forEach(function (columnName) {
                 if (_this.expressionMap.mainAlias.hasMetadata) {
-                    columns.push.apply(columns, __spread(_this.expressionMap.mainAlias.metadata.findColumnsWithPropertyPath(columnName)));
+                    columns.push.apply(columns, _this.expressionMap.mainAlias.metadata.findColumnsWithPropertyPath(columnName));
                 }
             });
         }

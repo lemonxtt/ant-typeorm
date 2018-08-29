@@ -33,26 +33,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 import { getConnection } from "../index";
 /**
  * Base abstract entity for all entities, used in ActiveRecord patterns.
@@ -93,7 +73,7 @@ var BaseEntity = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         base = this.constructor;
-                        return [4 /*yield*/, base.getRepository().findOneOrFail(base.getId(this))];
+                        return [4 /*yield*/, base.getRepository().findOneOrFail(base.getId())];
                     case 1:
                         newestEntity = _a.sent();
                         Object.assign(this, newestEntity);
@@ -164,7 +144,7 @@ var BaseEntity = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             entityLikes[_i - 1] = arguments[_i];
         }
-        return (_a = this.getRepository()).merge.apply(_a, __spread([mergeIntoEntity], entityLikes));
+        return (_a = this.getRepository()).merge.apply(_a, [mergeIntoEntity].concat(entityLikes));
         var _a;
     };
     /**
@@ -250,12 +230,6 @@ var BaseEntity = /** @class */ (function () {
      */
     BaseEntity.findOne = function (optionsOrConditions, maybeOptions) {
         return this.getRepository().findOne(optionsOrConditions, maybeOptions);
-    };
-    /**
-     * Finds first entity that matches given conditions.
-     */
-    BaseEntity.findOneOrFail = function (optionsOrConditions, maybeOptions) {
-        return this.getRepository().findOneOrFail(optionsOrConditions, maybeOptions);
     };
     /**
      * Executes a raw SQL query and returns a raw database results.

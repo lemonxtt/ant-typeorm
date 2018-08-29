@@ -221,14 +221,6 @@ export declare class ColumnMetadata {
      * Used only in tree entities with materialized path type.
      */
     isMaterializedPath: boolean;
-    /**
-     * Spatial Feature Type (Geometry, Point, Polygon, etc.)
-     */
-    spatialFeatureType?: string;
-    /**
-     * SRID (Spatial Reference ID (EPSG code))
-     */
-    srid?: number;
     constructor(options: {
         connection: Connection;
         entityMetadata: EntityMetadata;

@@ -96,14 +96,6 @@ export declare class TableColumn {
      * Generated column type. Supports only in MySQL.
      */
     generatedType?: "VIRTUAL" | "STORED";
-    /**
-     * Spatial Feature Type (Geometry, Point, Polygon, etc.)
-     */
-    spatialFeatureType?: string;
-    /**
-     * SRID (Spatial Reference ID (EPSG code))
-     */
-    srid?: number;
     constructor(options?: TableColumnOptions);
     /**
      * Clones this column to a new column with exact same properties as this column has.

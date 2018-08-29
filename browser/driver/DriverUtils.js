@@ -1,19 +1,3 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 /**
  * Common driver utility functions.
  */
@@ -77,7 +61,7 @@ var DriverUtils = /** @class */ (function () {
             username = usernameAndPassword.substr(0, firstColon);
             password = usernameAndPassword.substr(firstColon + 1);
         }
-        var _a = __read(hostAndPort.split(":"), 2), host = _a[0], port = _a[1];
+        var _a = hostAndPort.split(":"), host = _a[0], port = _a[1];
         return {
             host: host,
             username: username,

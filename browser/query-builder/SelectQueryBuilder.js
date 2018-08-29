@@ -43,26 +43,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 import { RawSqlResultsToEntityTransformer } from "./transformer/RawSqlResultsToEntityTransformer";
 import { SqlServerDriver } from "../driver/sqlserver/SqlServerDriver";
 import { PessimisticLockTransactionRequiredError } from "../error/PessimisticLockTransactionRequiredError";
@@ -869,7 +849,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
                 switch (_b.label) {
                     case 0:
                         this.expressionMap.queryEntity = false;
-                        _a = __read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
+                        _a = this.getQueryAndParameters(), sql = _a[0], parameters = _a[1];
                         queryRunner = this.obtainQueryRunner();
                         transactionStartedByUs = false;
                         _b.label = 1;
@@ -1006,15 +986,15 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         var excludedSelects = [];
         if (this.expressionMap.mainAlias.hasMetadata) {
             var metadata = this.expressionMap.mainAlias.metadata;
-            allSelects.push.apply(allSelects, __spread(this.buildEscapedEntityColumnSelects(this.expressionMap.mainAlias.name, metadata)));
-            excludedSelects.push.apply(excludedSelects, __spread(this.findEntityColumnSelects(this.expressionMap.mainAlias.name, metadata)));
+            allSelects.push.apply(allSelects, this.buildEscapedEntityColumnSelects(this.expressionMap.mainAlias.name, metadata));
+            excludedSelects.push.apply(excludedSelects, this.findEntityColumnSelects(this.expressionMap.mainAlias.name, metadata));
         }
         // add selects from joins
         this.expressionMap.joinAttributes
             .forEach(function (join) {
             if (join.metadata) {
-                allSelects.push.apply(allSelects, __spread(_this.buildEscapedEntityColumnSelects(join.alias.name, join.metadata)));
-                excludedSelects.push.apply(excludedSelects, __spread(_this.findEntityColumnSelects(join.alias.name, join.metadata)));
+                allSelects.push.apply(allSelects, _this.buildEscapedEntityColumnSelects(join.alias.name, join.metadata));
+                excludedSelects.push.apply(excludedSelects, _this.findEntityColumnSelects(join.alias.name, join.metadata));
             }
             else {
                 var hasMainAlias = _this.expressionMap.selects.some(function (select) { return select.selection === join.alias.name; });
@@ -1268,27 +1248,24 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         var hasMainAlias = this.expressionMap.selects.some(function (select) { return select.selection === aliasName; });
         var columns = [];
         if (hasMainAlias) {
-            columns.push.apply(columns, __spread(metadata.columns.filter(function (column) { return column.isSelect === true; })));
+            columns.push.apply(columns, metadata.columns.filter(function (column) { return column.isSelect === true; }));
         }
-        columns.push.apply(columns, __spread(metadata.columns.filter(function (column) {
+        columns.push.apply(columns, metadata.columns.filter(function (column) {
             return _this.expressionMap.selects.some(function (select) { return select.selection === aliasName + "." + column.propertyPath; });
-        })));
+        }));
         // if user used partial selection and did not select some primary columns which are required to be selected
         // we select those primary columns and mark them as "virtual". Later virtual column values will be removed from final entity
         // to make entity contain exactly what user selected
         if (columns.length === 0) // however not in the case when nothing (even partial) was selected from this target (for example joins without selection)
             return [];
         var nonSelectedPrimaryColumns = this.expressionMap.queryEntity ? metadata.primaryColumns.filter(function (primaryColumn) { return columns.indexOf(primaryColumn) === -1; }) : [];
-        var allColumns = __spread(columns, nonSelectedPrimaryColumns);
+        var allColumns = columns.concat(nonSelectedPrimaryColumns);
         return allColumns.map(function (column) {
             var selection = _this.expressionMap.selects.find(function (select) { return select.selection === aliasName + "." + column.propertyPath; });
             var selectionPath = _this.escape(aliasName) + "." + _this.escape(column.databaseName);
             if (_this.connection.driver.spatialTypes.indexOf(column.type) !== -1) {
                 if (_this.connection.driver instanceof MysqlDriver)
                     selectionPath = "AsText(" + selectionPath + ")";
-                if (_this.connection.driver instanceof PostgresDriver)
-                    // cast to JSON to trigger parsing in the driver
-                    selectionPath = "ST_AsGeoJSON(" + selectionPath + ")::json";
                 if (_this.connection.driver instanceof SqlServerDriver)
                     selectionPath = selectionPath + ".ToString()";
             }
@@ -1385,7 +1362,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
                         relationCountMetadataTransformer.transform();
                         rawResults = [], entities = [];
                         if (!((this.expressionMap.skip || this.expressionMap.take) && this.expressionMap.joinAttributes.length > 0)) return [3 /*break*/, 4];
-                        _a = __read(this.createOrderByCombinedWithSelectExpression("distinctAlias"), 2), selects = _a[0], orderBys_1 = _a[1];
+                        _a = this.createOrderByCombinedWithSelectExpression("distinctAlias"), selects = _a[0], orderBys_1 = _a[1];
                         metadata_1 = this.expressionMap.mainAlias.metadata;
                         mainAliasName_1 = this.expressionMap.mainAlias.name;
                         querySelects = metadata_1.primaryColumns.map(function (primaryColumn) {
@@ -1476,7 +1453,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         var selectString = Object.keys(orderBys)
             .map(function (orderCriteria) {
             if (orderCriteria.indexOf(".") !== -1) {
-                var _a = __read(orderCriteria.split("."), 2), aliasName = _a[0], propertyPath = _a[1];
+                var _a = orderCriteria.split("."), aliasName = _a[0], propertyPath = _a[1];
                 var alias = _this.expressionMap.findAliasByName(aliasName);
                 var column = alias.metadata.findColumnWithPropertyName(propertyPath);
                 return _this.escape(parentAlias) + "." + _this.escape(_this.buildColumnAlias(aliasName, column.databaseName));
@@ -1491,7 +1468,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
         var orderByObject = {};
         Object.keys(orderBys).forEach(function (orderCriteria) {
             if (orderCriteria.indexOf(".") !== -1) {
-                var _a = __read(orderCriteria.split("."), 2), aliasName = _a[0], propertyPath = _a[1];
+                var _a = orderCriteria.split("."), aliasName = _a[0], propertyPath = _a[1];
                 var alias = _this.expressionMap.findAliasByName(aliasName);
                 var column = alias.metadata.findColumnWithPropertyName(propertyPath);
                 orderByObject[_this.escape(parentAlias) + "." + _this.escape(_this.buildColumnAlias(aliasName, column.databaseName))] = orderBys[orderCriteria];
@@ -1516,7 +1493,7 @@ var SelectQueryBuilder = /** @class */ (function (_super) {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = __read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
+                        _a = this.getQueryAndParameters(), sql = _a[0], parameters = _a[1];
                         queryId = sql + " -- PARAMETERS: " + JSON.stringify(parameters);
                         cacheOptions = typeof this.connection.options.cache === "object" ? this.connection.options.cache : {};
                         savedQueryResultCacheOptions = undefined;

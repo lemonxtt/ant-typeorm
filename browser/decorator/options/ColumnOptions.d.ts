@@ -114,12 +114,4 @@ export interface ColumnOptions {
      * this column when reading or writing to the database.
      */
     transformer?: ValueTransformer;
-    /**
-     * Spatial Feature Type (Geometry, Point, Polygon, etc.)
-     */
-    spatialFeatureType?: string;
-    /**
-     * SRID (Spatial Reference ID (EPSG code))
-     */
-    srid?: number;
 }

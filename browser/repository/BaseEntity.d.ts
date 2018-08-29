@@ -182,18 +182,6 @@ export declare class BaseEntity {
      */
     static findOne<T extends BaseEntity>(this: ObjectType<T>, conditions?: DeepPartial<T>, options?: FindOneOptions<T>): Promise<T | undefined>;
     /**
-     * Finds first entity that matches given options.
-     */
-    static findOneOrFail<T extends BaseEntity>(this: ObjectType<T>, id?: string | number | Date | ObjectID, options?: FindOneOptions<T>): Promise<T>;
-    /**
-     * Finds first entity that matches given options.
-     */
-    static findOneOrFail<T extends BaseEntity>(this: ObjectType<T>, options?: FindOneOptions<T>): Promise<T>;
-    /**
-     * Finds first entity that matches given conditions.
-     */
-    static findOneOrFail<T extends BaseEntity>(this: ObjectType<T>, conditions?: DeepPartial<T>, options?: FindOneOptions<T>): Promise<T>;
-    /**
      * Executes a raw SQL query and returns a raw database results.
      * Raw query execution is supported only by relational databases (MongoDB is not supported).
      */

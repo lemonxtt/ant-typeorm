@@ -53,7 +53,7 @@ var EntityMetadataValidator = /** @class */ (function () {
         // also validate if discriminator values are not empty and not repeated
         if (entityMetadata.inheritancePattern === "STI") {
             if (!entityMetadata.discriminatorColumn)
-                throw new Error("Entity " + entityMetadata.name + " using single-table inheritance, it should also have a discriminator column. Did you forget to put discriminator column options?");
+                throw new Error("Entity " + entityMetadata.name + " using single-table inheritance, it should also have a discriminator column. Did you forget to put @DiscriminatorColumn decorator?");
             if (["", undefined, null].indexOf(entityMetadata.discriminatorValue) !== -1)
                 throw new Error("Entity " + entityMetadata.name + " has empty discriminator value. Discriminator value should not be empty.");
             var sameDiscriminatorValueEntityMetadata = allEntityMetadatas.find(function (metadata) {

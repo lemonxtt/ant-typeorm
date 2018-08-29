@@ -1,24 +1,4 @@
 "use strict";
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Foreign key from the database stored in this class.
@@ -52,8 +32,8 @@ var TableForeignKey = /** @class */ (function () {
     TableForeignKey.prototype.clone = function () {
         return new TableForeignKey({
             name: this.name,
-            columnNames: __spread(this.columnNames),
-            referencedColumnNames: __spread(this.referencedColumnNames),
+            columnNames: this.columnNames.slice(),
+            referencedColumnNames: this.referencedColumnNames.slice(),
             referencedTableName: this.referencedTableName,
             onDelete: this.onDelete,
             onUpdate: this.onUpdate

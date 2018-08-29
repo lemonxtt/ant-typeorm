@@ -9,7 +9,6 @@ import { MssqlParameter } from "./MssqlParameter";
 import { TableUnique } from "../../schema-builder/table/TableUnique";
 import { TableCheck } from "../../schema-builder/table/TableCheck";
 import { BaseQueryRunner } from "../../query-runner/BaseQueryRunner";
-import { IsolationLevel } from "../types/IsolationLevel";
 /**
  * Runs queries on a single SQL Server database connection.
  */
@@ -40,7 +39,7 @@ export declare class SqlServerQueryRunner extends BaseQueryRunner implements Que
     /**
      * Starts transaction.
      */
-    startTransaction(isolationLevel?: IsolationLevel): Promise<void>;
+    startTransaction(): Promise<void>;
     /**
      * Commits transaction.
      * Error will be thrown if transaction was not started.
@@ -320,9 +319,4 @@ export declare class SqlServerQueryRunner extends BaseQueryRunner implements Que
      * Converts MssqlParameter into real mssql parameter type.
      */
     protected mssqlParameterToNativeParameter(parameter: MssqlParameter): any;
-    /**
-     * Converts string literal of isolation level to enum.
-     * The underlying mssql driver requires an enum for the isolation level.
-     */
-    convertIsolationLevel(isolation: IsolationLevel): any;
 }

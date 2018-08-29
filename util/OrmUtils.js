@@ -1,24 +1,4 @@
 "use strict";
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var OrmUtils = /** @class */ (function () {
     function OrmUtils() {
@@ -94,11 +74,7 @@ var OrmUtils = /** @class */ (function () {
                 // if (source[key] instanceof Promise) {
                 //     propertyKey = "__" + key + "__";
                 // }
-                if (this.isObject(source[propertyKey])
-                    && !(source[propertyKey] instanceof Map)
-                    && !(source[propertyKey] instanceof Set)
-                    && !(source[propertyKey] instanceof Date)
-                    && !(source[propertyKey] instanceof Buffer)) {
+                if (this.isObject(source[propertyKey]) && !(source[propertyKey] instanceof Date) && !(source[propertyKey] instanceof Buffer)) {
                     if (!target[key])
                         Object.assign(target, (_a = {}, _a[key] = {}, _a));
                     this.mergeDeep(target[key], source[propertyKey]);
@@ -108,7 +84,7 @@ var OrmUtils = /** @class */ (function () {
                 }
             }
         }
-        return this.mergeDeep.apply(this, __spread([target], sources));
+        return this.mergeDeep.apply(this, [target].concat(sources));
         var _a, _b;
     };
     /**

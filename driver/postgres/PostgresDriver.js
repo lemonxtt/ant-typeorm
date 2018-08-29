@@ -34,26 +34,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var ConnectionIsNotSetError_1 = require("../../error/ConnectionIsNotSetError");
 var DriverPackageNotInstalledError_1 = require("../../error/DriverPackageNotInstalledError");
@@ -155,17 +135,12 @@ var PostgresDriver = /** @class */ (function () {
             "numrange",
             "tsrange",
             "tstzrange",
-            "daterange",
-            "geometry",
-            "geography"
+            "daterange"
         ];
         /**
          * Gets list of spatial column data types.
          */
-        this.spatialTypes = [
-            "geometry",
-            "geography"
-        ];
+        this.spatialTypes = [];
         /**
          * Gets list of column data types that support length by a driver.
          */
@@ -292,7 +267,7 @@ var PostgresDriver = /** @class */ (function () {
     PostgresDriver.prototype.afterConnect = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
-            var hasUuidColumns, hasCitextColumns, hasHstoreColumns, hasGeometryColumns;
+            var hasUuidColumns, hasCitextColumns, hasHstoreColumns;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -305,14 +280,11 @@ var PostgresDriver = /** @class */ (function () {
                         hasHstoreColumns = this.connection.entityMetadatas.some(function (metadata) {
                             return metadata.columns.filter(function (column) { return column.type === "hstore"; }).length > 0;
                         });
-                        hasGeometryColumns = this.connection.entityMetadatas.some(function (metadata) {
-                            return metadata.columns.filter(function (column) { return _this.spatialTypes.indexOf(column.type) >= 0; }).length > 0;
-                        });
-                        if (!(hasUuidColumns || hasCitextColumns || hasHstoreColumns || hasGeometryColumns)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, Promise.all(__spread([this.master], this.slaves).map(function (pool) {
+                        if (!(hasUuidColumns || hasCitextColumns || hasHstoreColumns)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, Promise.all([this.master].concat(this.slaves).map(function (pool) {
                                 return new Promise(function (ok, fail) {
                                     pool.connect(function (err, connection, release) { return __awaiter(_this, void 0, void 0, function () {
-                                        var logger, _1, _2, _3, _4;
+                                        var logger, _1, _2, _3;
                                         return __generator(this, function (_a) {
                                             switch (_a.label) {
                                                 case 0:
@@ -358,19 +330,6 @@ var PostgresDriver = /** @class */ (function () {
                                                     logger.log("warn", "At least one of the entities has hstore column, but the 'hstore' extension cannot be installed automatically. Please install it manually using superuser rights");
                                                     return [3 /*break*/, 12];
                                                 case 12:
-                                                    if (!hasGeometryColumns) return [3 /*break*/, 16];
-                                                    _a.label = 13;
-                                                case 13:
-                                                    _a.trys.push([13, 15, , 16]);
-                                                    return [4 /*yield*/, this.executeQuery(connection, "CREATE EXTENSION IF NOT EXISTS \"postgis\"")];
-                                                case 14:
-                                                    _a.sent();
-                                                    return [3 /*break*/, 16];
-                                                case 15:
-                                                    _4 = _a.sent();
-                                                    logger.log("warn", "At least one of the entities has a geometry column, but the 'postgis' extension cannot be installed automatically. Please install it manually using superuser rights");
-                                                    return [3 /*break*/, 16];
-                                                case 16:
                                                     release();
                                                     ok();
                                                     return [2 /*return*/];
@@ -448,7 +407,7 @@ var PostgresDriver = /** @class */ (function () {
             || columnMetadata.type === "timestamp without time zone") {
             return DateUtils_1.DateUtils.mixedDateToDate(value);
         }
-        else if (__spread(["json", "jsonb"], this.spatialTypes).indexOf(columnMetadata.type) >= 0) {
+        else if (columnMetadata.type === "json" || columnMetadata.type === "jsonb") {
             return JSON.stringify(value);
         }
         else if (columnMetadata.type === "hstore") {
@@ -686,17 +645,6 @@ var PostgresDriver = /** @class */ (function () {
         else if (column.type === "timestamp with time zone") {
             type = "TIMESTAMP" + (column.precision !== null && column.precision !== undefined ? "(" + column.precision + ")" : "") + " WITH TIME ZONE";
         }
-        else if (this.spatialTypes.indexOf(column.type) >= 0) {
-            if (column.spatialFeatureType != null && column.srid != null) {
-                type = column.type + "(" + column.spatialFeatureType + "," + column.srid + ")";
-            }
-            else if (column.spatialFeatureType != null) {
-                type = column.type + "(" + column.spatialFeatureType + ")";
-            }
-            else {
-                type = column.type;
-            }
-        }
         if (column.isArray)
             type += " array";
         return type;
@@ -767,9 +715,7 @@ var PostgresDriver = /** @class */ (function () {
                 || tableColumn.isNullable !== columnMetadata.isNullable
                 || tableColumn.isUnique !== _this.normalizeIsUnique(columnMetadata)
                 || (tableColumn.enum && columnMetadata.enum && !OrmUtils_1.OrmUtils.isArraysEqual(tableColumn.enum, columnMetadata.enum))
-                || tableColumn.isGenerated !== columnMetadata.isGenerated
-                || (tableColumn.spatialFeatureType || "").toLowerCase() !== (columnMetadata.spatialFeatureType || "").toLowerCase()
-                || tableColumn.srid !== columnMetadata.srid;
+                || tableColumn.isGenerated !== columnMetadata.isGenerated;
         });
     };
     /**

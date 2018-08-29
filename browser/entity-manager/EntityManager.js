@@ -79,17 +79,19 @@ var EntityManager = /** @class */ (function () {
             Object.assign(this.queryRunner, { manager: this });
         }
     }
-    EntityManager.prototype.transaction = function (isolationOrRunInTransaction, runInTransactionParam) {
+    // -------------------------------------------------------------------------
+    // Public Methods
+    // -------------------------------------------------------------------------
+    /**
+     * Wraps given function execution (and all operations made there) in a transaction.
+     * All database operations must be executed using provided entity manager.
+     */
+    EntityManager.prototype.transaction = function (runInTransaction) {
         return __awaiter(this, void 0, void 0, function () {
-            var isolation, runInTransaction, queryRunner, result, err_1, rollbackError_1;
+            var queryRunner, result, err_1, rollbackError_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        isolation = typeof isolationOrRunInTransaction === "string" ? isolationOrRunInTransaction : undefined;
-                        runInTransaction = typeof isolationOrRunInTransaction === "function" ? isolationOrRunInTransaction : runInTransactionParam;
-                        if (!runInTransaction) {
-                            throw new Error("Transaction method requires callback in second paramter if isolation level is supplied.");
-                        }
                         if (this.connection.driver instanceof MongoDriver)
                             throw new Error("Transactions aren't supported by MongoDB.");
                         if (this.queryRunner && this.queryRunner.isReleased)
@@ -99,44 +101,38 @@ var EntityManager = /** @class */ (function () {
                         queryRunner = this.queryRunner || this.connection.createQueryRunner("master");
                         _a.label = 1;
                     case 1:
-                        _a.trys.push([1, 8, 13, 16]);
-                        if (!isolation) return [3 /*break*/, 3];
-                        return [4 /*yield*/, queryRunner.startTransaction(isolation)];
+                        _a.trys.push([1, 5, 10, 13]);
+                        return [4 /*yield*/, queryRunner.startTransaction()];
                     case 2:
                         _a.sent();
-                        return [3 /*break*/, 5];
-                    case 3: return [4 /*yield*/, queryRunner.startTransaction()];
-                    case 4:
-                        _a.sent();
-                        _a.label = 5;
-                    case 5: return [4 /*yield*/, runInTransaction(queryRunner.manager)];
-                    case 6:
+                        return [4 /*yield*/, runInTransaction(queryRunner.manager)];
+                    case 3:
                         result = _a.sent();
                         return [4 /*yield*/, queryRunner.commitTransaction()];
-                    case 7:
+                    case 4:
                         _a.sent();
                         return [2 /*return*/, result];
-                    case 8:
+                    case 5:
                         err_1 = _a.sent();
-                        _a.label = 9;
-                    case 9:
-                        _a.trys.push([9, 11, , 12]);
+                        _a.label = 6;
+                    case 6:
+                        _a.trys.push([6, 8, , 9]);
                         return [4 /*yield*/, queryRunner.rollbackTransaction()];
-                    case 10:
+                    case 7:
                         _a.sent();
-                        return [3 /*break*/, 12];
-                    case 11:
+                        return [3 /*break*/, 9];
+                    case 8:
                         rollbackError_1 = _a.sent();
-                        return [3 /*break*/, 12];
-                    case 12: throw err_1;
-                    case 13:
-                        if (!!this.queryRunner) return [3 /*break*/, 15];
+                        return [3 /*break*/, 9];
+                    case 9: throw err_1;
+                    case 10:
+                        if (!!this.queryRunner) return [3 /*break*/, 12];
                         return [4 /*yield*/, queryRunner.release()];
-                    case 14:
+                    case 11:
                         _a.sent();
-                        _a.label = 15;
-                    case 15: return [7 /*endfinally*/];
-                    case 16: return [2 /*return*/];
+                        _a.label = 12;
+                    case 12: return [7 /*endfinally*/];
+                    case 13: return [2 /*return*/];
                 }
             });
         });

@@ -1,19 +1,3 @@
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 /**
  * Provides utilities to transform hydrated and persisted data.
  */
@@ -68,7 +52,7 @@ var DateUtils = /** @class */ (function () {
      */
     DateUtils.mixedTimeToDate = function (value) {
         if (typeof value === "string") {
-            var _a = __read(value.split(":"), 3), hours = _a[0], minutes = _a[1], seconds = _a[2];
+            var _a = value.split(":"), hours = _a[0], minutes = _a[1], seconds = _a[2];
             var date = new Date();
             if (hours)
                 date.setHours(parseInt(hours));

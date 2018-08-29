@@ -44,22 +44,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransactionAlreadyStartedError_1 = require("../../error/TransactionAlreadyStartedError");
 var TransactionNotStartedError_1 = require("../../error/TransactionNotStartedError");
@@ -105,7 +89,7 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
     /**
      * Starts transaction.
      */
-    AbstractSqliteQueryRunner.prototype.startTransaction = function (isolationLevel) {
+    AbstractSqliteQueryRunner.prototype.startTransaction = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -113,21 +97,8 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
                         if (this.isTransactionActive)
                             throw new TransactionAlreadyStartedError_1.TransactionAlreadyStartedError();
                         this.isTransactionActive = true;
-                        if (!isolationLevel) return [3 /*break*/, 4];
-                        if (isolationLevel !== "READ UNCOMMITTED" && isolationLevel !== "SERIALIZABLE") {
-                            throw new Error("SQLite only supports SERIALIZABLE and READ UNCOMMITTED isolation");
-                        }
-                        if (!(isolationLevel === "READ UNCOMMITTED")) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.query("PRAGMA read_uncommitted = true")];
+                        return [4 /*yield*/, this.query("BEGIN TRANSACTION")];
                     case 1:
-                        _a.sent();
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, this.query("PRAGMA read_uncommitted = false")];
-                    case 3:
-                        _a.sent();
-                        _a.label = 4;
-                    case 4: return [4 /*yield*/, this.query("BEGIN TRANSACTION")];
-                    case 5:
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -1268,7 +1239,7 @@ var AbstractSqliteQueryRunner = /** @class */ (function (_super) {
                                                     this.query("PRAGMA foreign_key_list(\"" + dbTable["name"] + "\")"),
                                                 ])];
                                         case 1:
-                                            _a = __read.apply(void 0, [_c.sent(), 3]), dbColumns = _a[0], dbIndices = _a[1], dbForeignKeys = _a[2];
+                                            _a = _c.sent(), dbColumns = _a[0], dbIndices = _a[1], dbForeignKeys = _a[2];
                                             autoIncrementColumnName = undefined;
                                             tableSql = dbTable["sql"];
                                             if (tableSql.indexOf("AUTOINCREMENT") !== -1) {

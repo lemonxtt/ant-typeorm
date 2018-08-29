@@ -33,26 +33,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 import { CannotAttachTreeChildrenEntityError } from "../../error/CannotAttachTreeChildrenEntityError";
 /**
  * Executes subject operations for closure entities.
@@ -135,7 +115,7 @@ var ClosureSubjectExecutor = /** @class */ (function () {
                             var parameterName = _this.queryRunner.connection.driver.createParameter("parent_entity_" + column.databaseName, firstQueryParameters_1.length - 1);
                             return columnName + " = " + parameterName;
                         }).join(", ");
-                        return [4 /*yield*/, this.queryRunner.query("INSERT INTO " + tableName + " (" + __spread(ancestorColumnNames, descendantColumnNames).join(", ") + ") " +
+                        return [4 /*yield*/, this.queryRunner.query("INSERT INTO " + tableName + " (" + ancestorColumnNames.concat(descendantColumnNames).join(", ") + ") " +
                                 ("SELECT " + ancestorColumnNames.join(", ") + ", " + childEntityIds1.join(", ") + " FROM " + tableName + " WHERE " + whereCondition), firstQueryParameters_1)];
                     case 2:
                         _a.sent();

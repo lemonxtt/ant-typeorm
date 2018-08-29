@@ -103,8 +103,7 @@ var SqlServerDriver = /** @class */ (function () {
             "uniqueidentifier",
             "xml",
             "geometry",
-            "geography",
-            "rowversion"
+            "geography"
         ];
         /**
          * Gets list of spatial column data types.
@@ -423,9 +422,6 @@ var SqlServerDriver = /** @class */ (function () {
         }
         else if (column.type === "double precision") {
             return "float";
-        }
-        else if (column.type === "rowversion") {
-            return "timestamp"; // the rowversion type's name in SQL server metadata is timestamp            
         }
         else {
             return column.type || "";

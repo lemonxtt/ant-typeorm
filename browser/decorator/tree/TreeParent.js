@@ -3,8 +3,7 @@ import { getMetadataArgsStorage } from "../../";
  * Marks a entity property as a parent of the tree.
  * "Tree parent" indicates who owns (is a parent) of this entity in tree structure.
  */
-export function TreeParent(options) {
-    if (options === void 0) { options = {}; }
+export function TreeParent() {
     return function (object, propertyName) {
         // now try to determine it its lazy relation
         var reflectedType = Reflect && Reflect.getMetadata ? Reflect.getMetadata("design:type", object, propertyName) : undefined;
@@ -16,7 +15,7 @@ export function TreeParent(options) {
             isLazy: isLazy,
             relationType: "many-to-one",
             type: function () { return object.constructor; },
-            options: options
+            options: {}
         });
     };
 }

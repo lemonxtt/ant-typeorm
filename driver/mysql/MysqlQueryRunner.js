@@ -44,22 +44,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransactionAlreadyStartedError_1 = require("../../error/TransactionAlreadyStartedError");
 var TransactionNotStartedError_1 = require("../../error/TransactionNotStartedError");
@@ -131,7 +115,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
     /**
      * Starts transaction on the current connection.
      */
-    MysqlQueryRunner.prototype.startTransaction = function (isolationLevel) {
+    MysqlQueryRunner.prototype.startTransaction = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -142,12 +126,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                         return [4 /*yield*/, this.query("START TRANSACTION")];
                     case 1:
                         _a.sent();
-                        if (!isolationLevel) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.query("SET SESSION TRANSACTION ISOLATION LEVEL " + isolationLevel)];
-                    case 2:
-                        _a.sent();
-                        _a.label = 3;
-                    case 3: return [2 /*return*/];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -1525,7 +1504,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                     case 1:
                         currentDatabase = _b.sent();
                         tablesCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), database = _a[0], name = _a[1];
+                            var _a = tableName.split("."), database = _a[0], name = _a[1];
                             if (!name) {
                                 name = database;
                                 database = _this.driver.database || currentDatabase;
@@ -1537,7 +1516,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                         primaryKeySql = "SELECT * FROM `INFORMATION_SCHEMA`.`KEY_COLUMN_USAGE` WHERE `CONSTRAINT_NAME` = 'PRIMARY' AND (" + tablesCondition + ")";
                         collationsSql = "SELECT `SCHEMA_NAME`, `DEFAULT_CHARACTER_SET_NAME` as `CHARSET`, `DEFAULT_COLLATION_NAME` AS `COLLATION` FROM `INFORMATION_SCHEMA`.`SCHEMATA`";
                         indicesCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), database = _a[0], name = _a[1];
+                            var _a = tableName.split("."), database = _a[0], name = _a[1];
                             if (!name) {
                                 name = database;
                                 database = _this.driver.database || currentDatabase;
@@ -1548,7 +1527,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                             "LEFT JOIN `INFORMATION_SCHEMA`.`REFERENTIAL_CONSTRAINTS` `rc` ON `s`.`INDEX_NAME` = `rc`.`CONSTRAINT_NAME` " +
                             ("WHERE (" + indicesCondition + ") AND `s`.`INDEX_NAME` != 'PRIMARY' AND `rc`.`CONSTRAINT_NAME` IS NULL");
                         foreignKeysCondition = tableNames.map(function (tableName) {
-                            var _a = __read(tableName.split("."), 2), database = _a[0], name = _a[1];
+                            var _a = tableName.split("."), database = _a[0], name = _a[1];
                             if (!name) {
                                 name = database;
                                 database = _this.driver.database || currentDatabase;
@@ -1569,7 +1548,7 @@ var MysqlQueryRunner = /** @class */ (function (_super) {
                                 this.query(foreignKeysSql)
                             ])];
                     case 2:
-                        _a = __read.apply(void 0, [_b.sent(), 6]), dbTables = _a[0], dbColumns = _a[1], dbPrimaryKeys = _a[2], dbCollations = _a[3], dbIndices = _a[4], dbForeignKeys = _a[5];
+                        _a = _b.sent(), dbTables = _a[0], dbColumns = _a[1], dbPrimaryKeys = _a[2], dbCollations = _a[3], dbIndices = _a[4], dbForeignKeys = _a[5];
                         // if tables were not found in the db, no need to proceed
                         if (!dbTables.length)
                             return [2 /*return*/, []];

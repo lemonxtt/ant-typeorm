@@ -111,7 +111,6 @@ var SqliteDriver = /** @class */ (function (_super) {
     SqliteDriver.prototype.createDatabaseConnection = function () {
         var _this = this;
         return new Promise(function (ok, fail) { return __awaiter(_this, void 0, void 0, function () {
-            var _this = this;
             var databaseConnection;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -128,14 +127,6 @@ var SqliteDriver = /** @class */ (function (_super) {
                                     return fail(err);
                                 ok(databaseConnection);
                             });
-                            // in the options, if encryption key for for SQLCipher is setted.
-                            if (_this.options.key) {
-                                databaseConnection.run("PRAGMA key = " + _this.options.key + ";", function (err, result) {
-                                    if (err)
-                                        return fail(err);
-                                    ok(databaseConnection);
-                                });
-                            }
                         });
                         return [2 /*return*/];
                 }

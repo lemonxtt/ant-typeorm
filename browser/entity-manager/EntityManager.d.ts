@@ -18,7 +18,6 @@ import { InsertResult } from "../query-builder/result/InsertResult";
 import { UpdateResult } from "../query-builder/result/UpdateResult";
 import { DeleteResult } from "../query-builder/result/DeleteResult";
 import { FindConditions } from "../find-options/FindConditions";
-import { IsolationLevel } from "../driver/types/IsolationLevel";
 /**
  * Entity manager supposed to work with any entity, automatically find its repository and call its methods,
  * whatever entity type are you passing.
@@ -47,7 +46,6 @@ export declare class EntityManager {
      * All database operations must be executed using provided entity manager.
      */
     transaction<T>(runInTransaction: (entityManger: EntityManager) => Promise<T>): Promise<T>;
-    transaction<T>(isolationLevel: IsolationLevel, runInTransaction: (entityManger: EntityManager) => Promise<T>): Promise<T>;
     /**
      * Executes raw SQL query and returns raw database results.
      */

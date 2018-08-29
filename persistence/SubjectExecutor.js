@@ -34,22 +34,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var PromiseUtils_1 = require("../util/PromiseUtils");
 var SubjectTopoligicalSorter_1 = require("./SubjectTopoligicalSorter");
@@ -237,7 +221,7 @@ var SubjectExecutor = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = __read(this.groupBulkSubjects(this.insertSubjects, "insert"), 2), groupedInsertSubjects = _a[0], groupedInsertSubjectKeys = _a[1];
+                        _a = this.groupBulkSubjects(this.insertSubjects, "insert"), groupedInsertSubjects = _a[0], groupedInsertSubjectKeys = _a[1];
                         // then we run insertion in the sequential order which is important since we have an ordered subjects
                         return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(groupedInsertSubjectKeys, function (groupName) { return __awaiter(_this, void 0, void 0, function () {
                                 var _this = this;
@@ -450,7 +434,7 @@ var SubjectExecutor = /** @class */ (function () {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = __read(this.groupBulkSubjects(this.removeSubjects, "delete"), 2), groupedRemoveSubjects = _a[0], groupedRemoveSubjectKeys = _a[1];
+                        _a = this.groupBulkSubjects(this.removeSubjects, "delete"), groupedRemoveSubjects = _a[0], groupedRemoveSubjectKeys = _a[1];
                         return [4 /*yield*/, PromiseUtils_1.PromiseUtils.runInSequence(groupedRemoveSubjectKeys, function (groupName) { return __awaiter(_this, void 0, void 0, function () {
                                 var subjects, deleteMaps, manager;
                                 return __generator(this, function (_a) {

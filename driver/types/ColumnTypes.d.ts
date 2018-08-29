@@ -3,10 +3,6 @@
  */
 export declare type PrimaryGeneratedColumnType = "int" | "int2" | "int2" | "int4" | "int8" | "integer" | "tinyint" | "smallint" | "mediumint" | "bigint" | "dec" | "decimal" | "numeric" | "number";
 /**
- * Column types where spatial properties are used.
- */
-export declare type SpatialColumnType = "geometry" | "geography";
-/**
  * Column types where precision and scale properties are used.
  */
 export declare type WithPrecisionColumnType = "float" | "double" | "dec" | "decimal" | "numeric" | "real" | "double precision" | "number" | "datetime" | "datetime2" | "datetimeoffset" | "time" | "time with time zone" | "time without time zone" | "timestamp" | "timestamp without time zone" | "timestamp with time zone" | "timestamp with local time zone";
@@ -22,4 +18,4 @@ export declare type SimpleColumnType = "simple-array" | "simple-json" | "bit" | 
 /**
  * Any column type column can be.
  */
-export declare type ColumnType = WithPrecisionColumnType | WithLengthColumnType | WithWidthColumnType | SpatialColumnType | SimpleColumnType | BooleanConstructor | DateConstructor | NumberConstructor | StringConstructor;
+export declare type ColumnType = WithPrecisionColumnType | WithLengthColumnType | WithWidthColumnType | SimpleColumnType | BooleanConstructor | DateConstructor | NumberConstructor | StringConstructor;

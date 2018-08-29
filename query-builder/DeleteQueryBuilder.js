@@ -44,22 +44,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var QueryBuilder_1 = require("./QueryBuilder");
 var SqlServerDriver_1 = require("../driver/sqlserver/SqlServerDriver");
@@ -101,7 +85,7 @@ var DeleteQueryBuilder = /** @class */ (function (_super) {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        _a = __read(this.getQueryAndParameters(), 2), sql = _a[0], parameters = _a[1];
+                        _a = this.getQueryAndParameters(), sql = _a[0], parameters = _a[1];
                         queryRunner = this.obtainQueryRunner();
                         transactionStartedByUs = false;
                         _c.label = 1;

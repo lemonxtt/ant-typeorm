@@ -1,24 +1,4 @@
 "use strict";
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var EntityMetadata_1 = require("../metadata/EntityMetadata");
 var ColumnMetadata_1 = require("../metadata/ColumnMetadata");
@@ -137,7 +117,7 @@ var EntityMetadataBuilder = /** @class */ (function () {
                     return; // no join table set - no need to do anything (it means this is many-to-many inverse side)
                 // here we create a junction entity metadata for a new junction table of many-to-many relation
                 var junctionEntityMetadata = _this.junctionEntityMetadataBuilder.build(relation, joinTable);
-                relation.registerForeignKeys.apply(relation, __spread(junctionEntityMetadata.foreignKeys));
+                relation.registerForeignKeys.apply(relation, junctionEntityMetadata.foreignKeys);
                 relation.registerJunctionEntityMetadata(junctionEntityMetadata);
                 // compute new entity metadata properties and push it to entity metadatas pool
                 _this.computeEntityMetadataStep2(junctionEntityMetadata);
@@ -225,7 +205,7 @@ var EntityMetadataBuilder = /** @class */ (function () {
                 .filterSingleTableChildren(tableArgs.target)
                 .map(function (args) { return args.target; })
                 .filter(function (target) { return target instanceof Function; });
-            inheritanceTree.push.apply(inheritanceTree, __spread(singleTableChildrenTargets));
+            inheritanceTree.push.apply(inheritanceTree, singleTableChildrenTargets);
         }
         return new EntityMetadata_1.EntityMetadata({
             connection: this.connection,
@@ -392,7 +372,7 @@ var EntityMetadataBuilder = /** @class */ (function () {
                     }
                 });
             });
-            (_a = entityMetadata.ownIndices).push.apply(_a, __spread(indices));
+            (_a = entityMetadata.ownIndices).push.apply(_a, indices);
         }
         else {
             entityMetadata.uniques = this.metadataArgsStorage.filterUniques(entityMetadata.inheritanceTree).map(function (args) {
@@ -520,7 +500,7 @@ var EntityMetadataBuilder = /** @class */ (function () {
             }
         }), new IndexMetadata_1.IndexMetadata({
             entityMetadata: entityMetadata,
-            columns: __spread(entityMetadata.primaryColumns, [entityMetadata.discriminatorColumn]),
+            columns: entityMetadata.primaryColumns.concat([entityMetadata.discriminatorColumn]),
             args: {
                 target: entityMetadata.target,
                 unique: false
